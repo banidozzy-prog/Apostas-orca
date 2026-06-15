@@ -1,28 +1,16 @@
-const { REST, Routes } = require('discord.js');
-const fs = require('node:fs');
-const path = require('node:path');
+module.exports = {
+    name: 'clientReady', // Nome atualizado para evitar avisos de depreciação
+    once: true, // Garante que o bot só execute isso uma vez ao ligar
+    async execute(client) {
+        console.log(`✅ Bot conectado como ${client.user.tag}!`);
+        
+        // Define o status do bot para ficar com cara de sistema oficial
+        client.user.setPresence({
+            activities: [{ name: 'Gerenciando Apostas ORCA', type: 0 }], // 0 = Jogando
+            status: 'online',
+        });
 
-const clientId = 'SEU_CLIENT_ID_AQUI'; // Pegue no Portal de Desenvolvedores
-const token = 'SEU_TOKEN_AQUI';
-
-const commands = [];
-const foldersPath = path.join(__dirname, 'slash');
-const commandFiles = fs.readdirSync(foldersPath).filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-    const filePath = path.join(foldersPath, file);
-    const command = require(filePath);
-    commands.push(command.data.toJSON());
-}
-
-const rest = new REST().setToken(token);
-
-(async () => {
-    try {
-        console.log(`Registrando ${commands.length} comandos...`);
-        await rest.put(Routes.applicationCommands(clientId), { body: commands });
-        console.log('✅ Comandos registrados com sucesso!');
-    } catch (error) {
-        console.error(error);
+        // Opcional: Verificação de banco de dados
+        console.log(`📡 Sistema pronto para operar em ${client.guilds.cache.size} servidor(es).`);
     }
-})();
+};
