@@ -1,25 +1,14 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('configurar_filas')
-        .setDescription('Cria o painel de fila')
-        .addStringOption(o => o.setName('tipo').setDescription('Ex: 2x2 Mobile').setRequired(true))
-        .addStringOption(o => o.setName('valor').setDescription('Ex: R$ 5,00').setRequired(true)),
+    data: new SlashCommandBuilder().setName('enviarpainel_pix').setDescription('Configura painel de PIX'),
     async execute(interaction) {
-        const tipo = interaction.options.getString('tipo');
-        const valor = interaction.options.getString('valor');
-
-        const embed = new EmbedBuilder()
-            .setTitle(`${tipo} | ${valor}`)
-            .setDescription('Jogadores:\nNenhum jogador na fila.')
-            .setColor('#2b2d31');
-
-        const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId(`entrar_${tipo}_${valor}`).setLabel('Entrar').setStyle(ButtonStyle.Success),
-            new ButtonBuilder().setCustomId(`sair_${tipo}_${valor}`).setLabel('Sair').setStyle(ButtonStyle.Danger)
+        const modal = new ModalBuilder().setCustomId('modal_pix').setTitle('Painel PIX');
+        modal.addComponents(
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('chave').setLabel('Chave PIX').setStyle(TextInputStyle.Short)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('nome').setLabel('Nome').setStyle(TextInputStyle.Short)),
+            new ActionRowBuilder().addComponents(new TextInputBuilder().setCustomId('url').setLabel('URL Foto').setStyle(TextInputStyle.Short))
         );
-
-        await interaction.reply({ embeds: [embed], components: [row] });
+        await interaction.showModal(modal);
     }
 };
