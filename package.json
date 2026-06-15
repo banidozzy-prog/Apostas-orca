@@ -1,13 +1,17 @@
 {
-  "name": "meu-bot-org",
+  "name": "orca-apostas",
   "version": "1.0.0",
-  "description": "Bot orca apostas ",
+  "description": "Bot de apostas para servidor",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "NODE_OPTIONS='--no-deprecation' node index.js",
+    "deploy": "node deploy.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1"
+    "discord.js": "^14.14.0",
+    "quick.db": "^9.1.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
