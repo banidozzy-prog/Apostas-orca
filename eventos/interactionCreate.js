@@ -1,35 +1,31 @@
-// Dentro do seu evento interactionCreate.js
-if (interaction.isButton()) {
-    const [action, tipo, valor] = interaction.customId.split('_');
-    const embed = interaction.message.embeds[0];
-    
-    // Filtra jogadores e remove quem saiu
-    let lista = embed.description.split('\n').slice(1).filter(j => j !== 'Nenhum jogador na fila.');
+const { InteractionType } = require('discord.js');
 
-    if (action === 'entrar') {
-        if (!lista.includes(`<@${interaction.user.id}>`)) lista.push(`<@${interaction.user.id}>`);
-    } else if (action === 'sair') {
-        lista = lista.filter(j => j !== `<@${interaction.user.id}>`);
+module.exports = {
+    name: 'interactionCreate',
+    async execute(interaction, client) {
+        // 1. Responder a Slash Commands
+        if (interaction.isChatInputCommand()) {
+            const command = client.slashCommands.get(interaction.commandName);
+            if (!command) return;
+            try { await command.execute(interaction); } 
+            catch (error) { console.error(error); }
+        }
+
+        // 2. Responder a Botões (Filas, Atender SS, Finalizar)
+        else if (interaction.isButton()) {
+            // Se for botão de fila, atende a lógica de lista
+            if (interaction.customId.startsWith('entrar_') || interaction.customId.startsWith('sair_')) {
+                // (Coloque aqui a lógica da fila que passei antes)
+            }
+            // Se for botão de "Atender SS"
+            else if (interaction.customId === 'atender_ss') {
+                // (Coloque aqui a lógica de abrir o Modal de Laudo)
+            }
+        }
+
+        // 3. Responder a Modals (PIX, Regras da Partida, Laudo do SS)
+        else if (interaction.type === InteractionType.ModalSubmit) {
+            // (Coloque aqui o tratamento para o Modal de PIX ou Laudo)
+        }
     }
-
-    const novoEmbed = EmbedBuilder.from(embed)
-        .setDescription(`Jogadores:\n${lista.length > 0 ? lista.join('\n') : 'Nenhum jogador na fila.'}`);
-
-    await interaction.update({ embeds: [novoEmbed] });
-}
-// Parte do Modal no interactionCreate
-if (interaction.isButton() && interaction.customId === 'atender_ss') {
-    const modal = new ModalBuilder().setCustomId('modal_laudo').setTitle('Laudo do Analista');
-    const input = new TextInputBuilder()
-        .setCustomId('texto_laudo')
-        .setLabel('Resultado da análise:')
-        .setStyle(TextInputStyle.Paragraph);
-        
-    modal.addComponents(new ActionRowBuilder().addComponents(input));
-    await interaction.showModal(modal);
-}
-
-if (interaction.isModalSubmit() && interaction.customId === 'modal_laudo') {
-    const laudo = interaction.fields.getTextInputValue('texto_laudo');
-    await interaction.reply({ content: `✅ **Laudo enviado:** ${laudo}` });
-}
+};
