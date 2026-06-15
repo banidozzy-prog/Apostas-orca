@@ -1,31 +1,28 @@
 const { REST, Routes } = require('discord.js');
-require('dotenv').config();
-const fs = require('fs');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const clientId = 'SEU_CLIENT_ID_AQUI'; // Pegue no Portal de Desenvolvedores
+const token = 'SEU_TOKEN_AQUI';
 
 const commands = [];
-// Lê todos os arquivos da pasta slash
-const commandFiles = fs.readdirSync('./slash').filter(file => file.endsWith('.js'));
+const foldersPath = path.join(__dirname, 'slash');
+const commandFiles = fs.readdirSync(foldersPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-    const command = require(`./slash/${file}`);
+    const filePath = path.join(foldersPath, file);
+    const command = require(filePath);
     commands.push(command.data.toJSON());
 }
 
-// Configura a conexão com a API do Discord
-const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+const rest = new REST().setToken(token);
 
 (async () => {
     try {
         console.log(`Registrando ${commands.length} comandos...`);
-
-        // Registra globalmente (pode levar alguns minutos para aparecer em todos os servidores)
-        await rest.put(
-            Routes.applicationCommands(process.env.CLIENT_ID),
-            { body: commands },
-        );
-
-        console.log('Comandos registrados com sucesso!');
+        await rest.put(Routes.applicationCommands(clientId), { body: commands });
+        console.log('✅ Comandos registrados com sucesso!');
     } catch (error) {
-        console.error('Erro ao registrar comandos:', error);
+        console.error(error);
     }
 })();
