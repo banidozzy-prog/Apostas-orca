@@ -1,20 +1,22 @@
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
-        // Se não for um botão, o bot ignora
-        if (!interaction.isButton()) return;
-
-        const { customId } = interaction;
-
-        // Aqui você cria a lógica de cada botão
-        if (customId === 'atender_ss') {
-            await interaction.reply({ content: '✅ Você atendeu o chamado!', ephemeral: true });
+        // Se for um Slash Command
+        if (interaction.isChatInputCommand()) {
+            const command = client.slash.get(interaction.commandName);
+            if (!command) return;
+            try { await command.execute(interaction); } 
+            catch (error) { console.error(error); }
         } 
-        else if (customId === 'ver_pix') {
-            await interaction.reply({ content: '💳 **Chave PIX:** XXX.XXX.XXX-XX', ephemeral: true });
-        }
-        else if (customId === 'finalizar_aposta') {
-            await interaction.reply({ content: '🏁 Aposta finalizada!', ephemeral: true });
+        
+        // Se for um clique num botão
+        else if (interaction.isButton()) {
+            if (interaction.customId === 'entrar_fila') {
+                await interaction.reply({ content: 'Entraste na fila! <:corfimar:1514876230787141805>', ephemeral: true });
+                // Aqui depois vamos ligar ao banco de dados para salvar o nome
+            } else if (interaction.customId === 'sair_fila') {
+                await interaction.reply({ content: 'Saíste da fila. <:cancelar:1514876408428494962>', ephemeral: true });
+            }
         }
     }
 };
