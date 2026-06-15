@@ -1,19 +1,32 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
+
 module.exports = {
-    name: 'configurar',
-    async execute(message, args) {
-        if (!message.member.permissions.has('Administrator')) return message.reply('❌ Você não tem permissão.');
+    data: new SlashCommandBuilder()
+        .setName('configurar')
+        .setDescription('Configura o sistema da organização')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator) // Apenas Admins usam
+        .addChannelOption(o => o.setName('categoria').setDescription('Categoria onde os tópicos serão criados').setRequired(true))
+        .addRoleOption(o => o.setName('cargo_ss').setDescription('Cargo que receberá os chamados de SS').setRequired(true))
+        .addChannelOption(o => o.setName('log_blacklist').setDescription('Canal de logs da blacklist').setRequired(true))
+        .addNumberOption(o => o.setName('taxa').setDescription('Taxa do ADM (em R$)').setRequired(true)),
 
-        // Exemplo: +configurar #canal-de-filas 1x1-Mobile
-        const canal = message.mentions.channels.first();
-        const nomeFila = args[1];
+    async execute(interaction) {
+        const categoria = interaction.options.getChannel('categoria');
+        const cargoSS = interaction.options.getRole('cargo_ss');
+        const logBlacklist = interaction.options.getChannel('log_blacklist');
+        const taxa = interaction.options.getNumber('taxa');
 
-        if (!canal || !nomeFila) {
-            return message.reply('Uso correto: `+configurar #canal nome-da-fila`');
-        }
+        // Salvando tudo no banco de dados
+        await db.set(`config_categoria`, categoria.id);
+        await db.set(`config_cargo_ss`, cargoSS.id);
+        await db.set(`config_log_blacklist`, logBlacklist.id);
+        await db.set(`config_taxa`, taxa);
 
-        // Aqui o bot salva essa config no arquivo JSON (banco de dados)
-        // O bot vai "entender" que toda vez que alguém pedir uma fila, ela abre nesse canal.
-        message.reply(`✅ Configurado! Filas de **${nomeFila}** serão enviadas em ${canal}`);
+        await interaction.reply({ 
+            content: `✅ **Configurações salvas com sucesso!**\n\n📂 Categoria: ${categoria}\n🛡️ Cargo SS: ${cargoSS}\n📜 Logs: ${logBlacklist}\n💰 Taxa: R$ ${taxa}`, 
+            ephemeral: true 
+        });
     }
 };
-
