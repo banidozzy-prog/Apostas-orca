@@ -1,23 +1,21 @@
 const { REST, Routes } = require('discord.js');
-const fs = require('node:fs');
-const token = 'SEU_TOKEN_AQUI';
-const clientId = 'SEU_CLIENT_ID_AQUI';
+const fs = require('fs');
 
-const commands = [];
-const commandFiles = fs.readdirSync('./barra').filter(file => file.endsWith('.js'));
+const comandos = [];
+const arquivos = fs.readdirSync('./barra').filter(file => file.endsWith('.js'));
 
-for (const file of commandFiles) {
+for (const file of arquivos) {
     const command = require(`./barra/${file}`);
-    commands.push(command.data.toJSON());
+    comandos.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: '10' }).setToken(token);
+const rest = new REST({ version: '10' }).setToken('SEU_TOKEN_AQUI');
 
 (async () => {
     try {
-        console.log('🔄 Registrando comandos Slash...');
-        await rest.put(Routes.applicationCommands(clientId), { body: commands });
-        console.log('✅ Todos os comandos Slash foram registrados com sucesso!');
+        console.log('🔄 Registrando comandos...');
+        await rest.put(Routes.applicationCommands('SEU_CLIENT_ID'), { body: comandos });
+        console.log('✅ Comandos registrados com sucesso!');
     } catch (error) {
         console.error(error);
     }
