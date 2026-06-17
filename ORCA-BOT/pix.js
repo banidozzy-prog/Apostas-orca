@@ -7,11 +7,7 @@ module.exports = {
         message.channel.send(`
 <:pix:1513764622677573714> CADASTRO PIX
 
-Envie:
-
-🔑 Chave PIX
-
-👤 Nome do Recebedor
+Clique no botão abaixo para cadastrar sua chave PIX.
         `);
 
     }
