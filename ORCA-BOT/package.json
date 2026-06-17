@@ -1,7 +1,11 @@
 {
   "name": "orca-bot",
   "version": "1.0.0",
+  "description": "ORCA APOSTAS",
   "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "discord.js": "^14.21.0"
   }
