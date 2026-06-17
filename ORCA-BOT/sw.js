@@ -1,31 +1,31 @@
+// sw.js
+
 module.exports = {
+name: "sw",
 
-    name: "sw",
+execute(message, args) {
 
-    execute(message, args) {
+    const jogador = message.mentions.users.first();
 
-        const user = message.mentions.users.first();
+    if (!jogador) {
+        return message.reply(
+            "❌ Use: +sw @jogador"
+        );
+    }
 
-        if (!user) {
-            return message.reply(
-                "Use: +sw @usuario"
-            );
-        }
+    message.channel.send(`
 
-        message.channel.send(`
-🏆 PAINEL DA PARTIDA
+<:COROA:1513767660825874524> PAINEL DA PARTIDA
 
-Mediador: ${message.author}
-
-Jogador Marcado: ${user}
+Jogador: ${jogador}
 
 🏆 Vitória Normal
 
 <:wo:1514083677880057916> Vitória por W.O
 
 <:finalizar:1514083336660975848> Finalizar Aposta
-        `);
+`);
 
-    }
+}
 
 };
