@@ -17,13 +17,17 @@ execute(message, args) {
 
 <:COROA:1513767660825874524> PAINEL DA PARTIDA
 
-Jogador: ${jogador}
+👤 Jogador: ${jogador}
 
-🏆 Vitória Normal
+🏆 Escolha o resultado da aposta:
+
+1️⃣ Vitória Normal
 
 <:wo:1514083677880057916> Vitória por W.O
 
-<:finalizar:1514083336660975848> Finalizar Aposta
+<:finalizar:1514083336660975848> Finalizar Partida
+
+⚠️ Apenas o mediador responsável deve registrar o resultado.
 `);
 
 }
