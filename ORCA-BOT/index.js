@@ -12,4 +12,12 @@ client.once("ready", () => {
   console.log(`🐋 ORCA ONLINE | ${client.user.tag}`);
 });
 
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+
+  if (message.content === "+ping") {
+    await message.reply("🏓 Pong!");
+  }
+});
+
 client.login(process.env.TOKEN);
